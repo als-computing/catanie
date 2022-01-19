@@ -34,9 +34,9 @@ export const environment = {
     { name: "size", order: 4, type: "standard", enabled: true },
     { name: "creationTime", order: 5, type: "standard", enabled: true },
     { name: "type", order: 6, type: "standard", enabled: true },
-    { name: "image", order: 7, type: "standard", enabled: false },
+    { name: "image", order: 7, type: "standard", enabled: true },
     { name: "metadata", order: 8, type: "standard", enabled: false },
-    { name: "proposalId", order: 9, type: "standard", enabled: true },
+    { name: "proposalId", order: 9, type: "standard", enabled: false },
     { name: "ownerGroup", order: 10, type: "standard", enabled: true },
     { name: "dataStatus", order: 11, type: "standard", enabled: true },
     // { name: "derivedDatasetsNum", order: 12, type: "standard", enabled: false }
