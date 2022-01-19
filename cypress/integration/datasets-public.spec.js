@@ -8,9 +8,8 @@ describe("Datasets", () => {
 
     cy.createDataset("raw");
 
-    cy.server();
-    cy.route("PUT", "/api/v3/Datasets/**/*").as("change");
-    cy.route("GET", "*").as("fetch");
+    cy.intercept("PUT", "/api/v3/Datasets/**/*").as("change");
+    cy.intercept("GET", "*").as("fetch");
   });
 
   after(() => {
@@ -27,8 +26,9 @@ describe("Datasets", () => {
 
       cy.wait("@fetch");
 
-      cy.get(".mat-row")
-        .contains("Cypress Dataset")
+      cy.wait(5000);
+
+      cy.contains(".mat-row", "Cypress Dataset")
         .click();
 
       cy.wait("@fetch");
@@ -41,9 +41,9 @@ describe("Datasets", () => {
 
       cy.get("@publicToggle").click();
 
-      cy.wait("@change").then(response => {
-        expect(response.method).to.eq("PUT");
-        expect(response.status).to.eq(200);
+      cy.wait("@change").then(({ request, response }) => {
+        expect(request.method).to.eq("PUT");
+        expect(response.statusCode).to.eq(200);
       });
 
       cy.get("mat-slide-toggle").should("have.class", "mat-checked");

@@ -10,6 +10,11 @@ export class OAuth2Endpoint {
   authURL= "";
 }
 
+export class RetrieveDestinations {
+  option = "";
+  location?: string | null = null;
+}
+
 export class AppConfig {
   lbBaseURL = "";
   externalAuthEndpoint: string | null = null;
@@ -48,6 +53,7 @@ export class AppConfig {
   searchPublicDataEnabled = false;
   searchSamples = false;
   sftpHost: string | null = null;
+  shareEnabled = false;
   shoppingCartEnabled = false;
   shoppingCartOnHeader = false;
   tableSciDataEnabled = false;
@@ -56,6 +62,7 @@ export class AppConfig {
   userNamePromptEnabled = false;
   loginFormEnabled = true;
   oAuth2Endpoints: OAuth2Endpoint[] = [];
+  retrieveDestinations?: RetrieveDestinations[] = [];
 }
 
 export const APP_DI_CONFIG: AppConfig = {
@@ -81,7 +88,8 @@ export const APP_DI_CONFIG: AppConfig = {
   jobsEnabled: environment.jobsEnabled ?? false,
   jsonMetadataEnabled: environment.jsonMetadataEnabled ?? false,
   logbookEnabled: environment.logbookEnabled ?? false,
-  localColumns: environment.localColumns ?? [
+  retrieveDestinations: environment["retrieveDestinations"] || [],
+  localColumns: environment["localColumns"] || [
     { name: "select", order: 0, type: "standard", enabled: true },
     { name: "datasetName", order: 1, type: "standard", enabled: true },
     { name: "runNumber", order: 2, type: "standard", enabled: true },
@@ -108,6 +116,7 @@ export const APP_DI_CONFIG: AppConfig = {
   searchPublicDataEnabled: environment.searchPublicDataEnabled ?? false,
   searchSamples: environment.searchSamples ?? false,
   sftpHost: environment.sftpHost ?? null,
+  shareEnabled: environment.shareEnabled ?? false,
   shoppingCartEnabled: environment.shoppingCartEnabled ?? false,
   shoppingCartOnHeader: environment.shoppingCartOnHeader ?? false,
   tableSciDataEnabled: environment.tableSciDataEnabled ?? false,

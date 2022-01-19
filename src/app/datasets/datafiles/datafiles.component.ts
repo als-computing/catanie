@@ -10,21 +10,18 @@ import {
   AfterViewChecked,
 } from "@angular/core";
 import { Subscription } from "rxjs";
-import { Store, select } from "@ngrx/store";
+import { Store } from "@ngrx/store";
 import {
-  getCurrentOrigDatablocks,
-  getCurrentDataset,
+  selectCurrentOrigDatablocks,
+  selectCurrentDataset,
 } from "state-management/selectors/datasets.selectors";
 import {
   TableColumn,
   PageChangeEvent,
   CheckboxEvent,
 } from "shared/modules/table/table.component";
-import { getIsLoading } from "state-management/selectors/user.selectors";
-import { ActivatedRoute } from "@angular/router";
-import { pluck } from "rxjs/operators";
-import { fetchDatasetAction } from "state-management/actions/datasets.actions";
-import { UserApi } from "shared/sdk";
+import { selectIsLoading } from "state-management/selectors/user.selectors";
+import { Datablock, UserApi } from "shared/sdk";
 import { FileSizePipe } from "shared/pipes/filesize.pipe";
 import { MatCheckboxChange } from "@angular/material/checkbox";
 
@@ -46,9 +43,9 @@ export interface File {
 })
 export class DatafilesComponent
   implements OnInit, OnDestroy, AfterViewInit, AfterViewChecked {
-  datablocks$ = this.store.pipe(select(getCurrentOrigDatablocks));
-  dataset$ = this.store.pipe(select(getCurrentDataset));
-  loading$ = this.store.pipe(select(getIsLoading));
+  datablocks$ = this.store.select(selectCurrentOrigDatablocks);
+  dataset$ = this.store.select(selectCurrentDataset);
+  loading$ = this.store.select(selectIsLoading);
 
   tooLargeFile = false;
   totalFileSize = 0;
@@ -68,8 +65,7 @@ export class DatafilesComponent
 
   fileDownloadEnabled: boolean = this.appConfig.fileDownloadEnabled;
   multipleDownloadEnabled: boolean = this.appConfig.multipleDownloadEnabled;
-  multipleDownloadAction: string | null = this.appConfig
-    .multipleDownloadAction;
+  multipleDownloadAction: string | null = this.appConfig.multipleDownloadAction;
   maxFileSize: number | null = this.appConfig.maxDirectDownloadSize;
   sftpHost: string | null = this.appConfig.sftpHost;
   jwt: any;
@@ -100,7 +96,6 @@ export class DatafilesComponent
   tableData: File[] = [];
 
   constructor(
-    private route: ActivatedRoute,
     private store: Store<Dataset>,
     private cdRef: ChangeDetectorRef,
     private userApi: UserApi,
@@ -194,12 +189,6 @@ export class DatafilesComponent
   }
 
   ngAfterViewInit() {
-    let datasetPid: string;
-    this.route.params.pipe(pluck("id")).subscribe((id: string) => {
-      datasetPid = id;
-      this.store.dispatch(fetchDatasetAction({ pid: id }));
-    });
-
     this.subscriptions.push(
       this.dataset$.subscribe((dataset) => {
         if (dataset) {
@@ -207,23 +196,22 @@ export class DatafilesComponent
         }
       })
     );
-
     this.subscriptions.push(
       this.datablocks$.subscribe((datablocks) => {
-        const files: File[] = [];
-        datablocks.forEach((block) => {
-          if (block.datasetId === datasetPid) {
-            block.dataFileList.map((file) => {
-              this.totalFileSize += file.size;
-              file.selected = false;
-              files.push(file);
-            });
-          }
-        });
-        this.count = files.length;
-        this.tableData = files.slice(0, this.pageSize);
-        this.files = files;
-        this.tooLargeFile = this.hasTooLargeFiles(this.files);
+        if (datablocks) {
+          const files: File[] = [];
+          datablocks.forEach((block) => {
+              block.dataFileList.map((file) => {
+                this.totalFileSize += file.size;
+                file.selected = false;
+                files.push(file);
+              });
+          });
+          this.count = files.length;
+          this.tableData = files.slice(0, this.pageSize);
+          this.files = files;
+          this.tooLargeFile = this.hasTooLargeFiles(this.files);
+        }
       })
     );
   }

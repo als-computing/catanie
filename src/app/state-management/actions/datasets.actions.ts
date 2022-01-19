@@ -1,5 +1,5 @@
 import { createAction, props } from "@ngrx/store";
-import { Dataset, Attachment, DerivedDataset } from "shared/sdk";
+import { Dataset, Attachment, DerivedDataset, OrigDatablock, Datablock } from "shared/sdk";
 import { FacetCounts } from "state-management/state/datasets.store";
 import {
   ArchViewMode,
@@ -50,6 +50,40 @@ export const fetchDatasetCompleteAction = createAction(
 );
 export const fetchDatasetFailedAction = createAction(
   "[Dataset] Fetch Dataset Failed"
+);
+export const fetchDatablocksAction = createAction(
+  "[Dataset] Fetch Origin Datablocks",
+  props<{ pid: string; filters?: any }>()
+);
+export const fetchDatablocksCompleteAction = createAction(
+  "[Dataset] Fetch Origin Datablocks Complete",
+  props<{ datablocks: Datablock[] }>()
+);
+export const fetchDatablocksFailedAction = createAction(
+  "[Dataset] Fetch Origin Datablocks Failed"
+);
+
+export const fetchOrigDatablocksAction = createAction(
+  "[Dataset] Fetch Origin Datablocks",
+  props<{ pid: string; filters?: any }>()
+);
+export const fetchOrigDatablocksCompleteAction = createAction(
+  "[Dataset] Fetch Origin Datablocks Complete",
+  props<{ origdatablocks: OrigDatablock[] }>()
+);
+export const fetchOrigDatablocksFailedAction = createAction(
+  "[Dataset] Fetch Origin Datablocks Failed"
+);
+export const fetchAttachmentsAction = createAction(
+  "[Dataset] Fetch Attachments",
+  props<{ pid: string; filters?: any }>()
+);
+export const fetchAttachmentsCompleteAction = createAction(
+  "[Dataset] Fetch Attachments Complete",
+  props<{ attachments: Attachment[] }>()
+);
+export const fetchAttachmentsFailedAction = createAction(
+  "[Dataset] Fetch Attachments Failed"
 );
 
 export const prefillBatchAction = createAction("[Dataset] Prefill Batch");
@@ -135,6 +169,17 @@ export const reduceDatasetFailedAction = createAction(
   "[Dataset] Reduce Dataset Failed"
 );
 
+export const appendToDatasetArrayFieldAction = createAction(
+  "[Dataset] Append To Array Field",
+  props<{ pid: string; fieldName: string; data: any[] }>()
+);
+export const appendToDatasetArrayFieldCompleteAction = createAction(
+  "[Dataset] Append To Array Field Complete"
+);
+export const appendToDatasetArrayFieldFailedAction = createAction(
+  "[Dataset] Append To Array Field Failed"
+);
+
 // === Dataset Table Selection ===
 
 export const selectDatasetAction = createAction(
@@ -177,7 +222,7 @@ export const setArchiveViewModeAction = createAction(
 );
 export const setPublicViewModeAction = createAction(
   "[Dataset] Set Public View Mode",
-  props<{ isPublished: boolean }>()
+  props<{ isPublished: boolean | ""}>()
 );
 
 export const prefillFiltersAction = createAction(
@@ -242,3 +287,5 @@ export const removeScientificConditionAction = createAction(
 );
 
 export const clearDatasetsStateAction = createAction("[Dataset] Clear State");
+
+export const clearCurrentDatasetStateAction = createAction("[Dataset] Clear Current Dataset State");
